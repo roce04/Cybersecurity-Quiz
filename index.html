@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard Academy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d1b69 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff88, #0088ff, #8800ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3)); }
+            to { filter: drop-shadow(0 0 30px rgba(0, 136, 255, 0.5)); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #b0b0b0;
+        }
+
+        .game-area {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-area::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .scenario {
+            margin-bottom: 30px;
+        }
+
+        .scenario-title {
+            font-size: 1.5rem;
+            color: #00ff88;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scenario-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .scenario-description {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #00ff88;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateX(10px);
+        }
+
+        .option.selected {
+            border-color: #0088ff;
+            background: rgba(0, 136, 255, 0.2);
+        }
+
+        .option.correct {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.2);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .option.incorrect {
+            border-color: #ff4757;
+            background: rgba(255, 71, 87, 0.2);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .button {
+            background: linear-gradient(45deg, #00ff88, #0088ff);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid #ff4757;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #0088ff);
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .final-score {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 15px;
+            border: 2px solid #00ff88;
+            display: none;
+        }
+
+        .score-title {
+            font-size: 2.5rem;
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+
+        .tips-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .tips-title {
+            font-size: 1.5rem;
+            color: #ffa500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tip {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffa500;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .stats {
+                gap: 15px;
+            }
+
+            .game-area {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">CyberGuard Academy</h1>
+            <p class="subtitle">Master the art of digital security through interactive challenges</p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="score">0</div>
+                    <div class="stat-label">Score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="current-question">1</div>
+                    <div class="stat-label">Question</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="streak">0</div>
+                    <div class="stat-label">Streak</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+
+            <div id="question-container">
+                <div class="scenario">
+                    <h2 class="scenario-title">
+                        <div class="scenario-icon"></div>
+                        <span id="scenario-title">Loading...</span>
+                    </h2>
+                    <div class="scenario-description" id="scenario-description">
+                        Loading scenario...
+                    </div>
+                    
+                    <div class="options" id="options-container">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    
+                    <button class="button" id="submit-btn" onclick="submitAnswer()" disabled>
+                        Submit Answer
+                    </button>
+                    
+                    <div class="feedback" id="feedback">
+                        <!-- Feedback will be shown here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="final-score" id="final-score">
+                <div class="score-title">Congratulations!</div>
+                <div id="final-score-text"></div>
+                <button class="button" onclick="restartGame()" style="margin-top: 20px;">
+                    Play Again
+                </button>
+            </div>
+        </div>
+
+        <div class="tips-section">
+            <h3 class="tips-title">Cybersecurity Tips</h3>
+            <div class="tip">
+                <strong>Strong Passwords:</strong> Use at least 12 characters with a mix of uppercase, lowercase, numbers, and symbols. Consider using a passphrase like "Coffee#Sunrise!2024"
+            </div>
+            <div class="tip">
+                <strong>Two-Factor Authentication:</strong> Always enable 2FA when available. It adds an extra layer of security even if your password is compromised.
+            </div>
+            <div class="tip">
+                <strong>Phishing Awareness:</strong> Always verify sender identity before clicking links or downloading attachments. When in doubt, contact the sender directly.
+            </div>
+            <div class="tip">
+                <strong>Software Updates:</strong> Keep your operating system, browsers, and applications updated. Security patches often fix critical vulnerabilities.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                icon: "",
+                title: "Suspicious Email Detection",
+                description: "You receive an email claiming to be from your bank, asking you to 'verify your account' by clicking a link. The email has your bank's logo but the sender address is 'security@bankhelp-verify.net' instead of your bank's official domain.",
+                options: [
+                    "Click the link immediately to verify your account",
+                    "Forward the email to friends to warn them",
+                    "Delete the email and log into your bank account directly through their official website",
+                    "Reply to the email asking for more information"
+                ],
+                correct: 2,
+                explanation: "Correct! This is a classic phishing attempt. Always access your bank's website directly by typing the URL or using bookmarks. Legitimate banks never ask for verification through email links."
+            },
+            {
+                icon: "",
+                title: "Password Security Challenge",
+                description: "You need to create a new password for your work account. The system requires at least 8 characters. Which password would be the most secure?",
+                options: [
+                    "password123",
+                    "MyBirthday1990!",
+                    "Tr0ub4dor&3",
+                    "correct horse battery staple"
+                ],
+                correct: 3,
+                explanation: "Excellent choice! Long passphrases with random words are highly secure and easier to remember than complex character combinations. Length is more important than complexity."
+            },
+            {
+                icon: "",
+                title: "Public Wi-Fi Security",
+                description: "You're at a coffee shop and need to check your online banking. You see several Wi-Fi networks available: 'CoffeeShop_Guest', 'Free_WiFi_Here', and 'CoffeeShop_Secure'. What should you do?",
+                options: [
+                    "Connect to 'Free_WiFi_Here' since it's free",
+                    "Use your mobile data instead of any public Wi-Fi",
+                    "Connect to 'CoffeeShop_Guest' and use banking normally",
+                    "Ask the staff which network to use and connect immediately"
+                ],
+                correct: 1,
+                explanation: "Perfect! Using your mobile data is the safest option for sensitive activities like banking. Public Wi-Fi networks can be monitored by attackers or be fake networks designed to steal information."
+            },
+            {
+                icon: "",
+                title: "Software Update Dilemma",
+                description: "A pop-up appears on your computer saying 'Critical Security Update Required! Click here to install immediately!' The pop-up appeared while browsing a website, not from your operating system.",
+                options: [
+                    "Click the pop-up to install the update immediately",
+                    "Close the pop-up and check for updates through your system settings",
+                    "Ignore it completely",
+                    "Share the pop-up with friends to get their opinion"
+                ],
+                correct: 1,
+                explanation: "Excellent! Legitimate system updates come through your operating system's update mechanism, not through web browser pop-ups. This is likely malware trying to trick you into installing harmful software."
+            },
+            {
+                icon: "",
+                title: "Social Engineering Attack",
+                description: "You receive a phone call from someone claiming to be from IT support. They say there's a security breach and they need your password to 'secure your account immediately.' They sound professional and know your name and department.",
+                options: [
+                    "Give them your password since they're from IT",
+                    "Ask for their employee ID and call back through official channels",
+                    "Hang up immediately without saying anything",
+                    "Give them a fake password to test if they're legitimate"
+                ],
+                correct: 1,
+                explanation: "Perfect! This is a social engineering attack. Legitimate IT staff will never ask for your password over the phone. Always verify through official channels before sharing any sensitive information."
+            },
+            {
+                icon: "",
+                title: "Suspicious Link Analysis",
+                description: "A friend sends you a text message with a shortened link (bit.ly/xyz123) saying 'OMG you have to see this article about you!' But the message seems unlike their usual writing style.",
+                options: [
+                    "Click the link immediately to see what it's about",
+                    "Contact your friend directly to verify they sent the message",
+                    "Share the link with other friends to see if it's safe",
+                    "Click the link but don't enter any personal information"
+                ],
+                correct: 1,
+                explanation: "Great thinking! Your friend's account might be compromised. Always verify suspicious messages directly with the sender through a different communication method before clicking any links."
+            },
+            {
+                icon: "",
+                title: "Online Shopping Security",
+                description: "You're about to make a purchase on a website. Which of these signs would make you most concerned about the site's security?",
+                options: [
+                    "The URL starts with 'https://' instead of 'http://'",
+                    "The site asks for your credit card information",
+                    "The URL has spelling errors like 'amazn.com' instead of 'amazon.com'",
+                    "The site has customer reviews"
+                ],
+                correct: 2,
+                explanation: "Correct! Misspelled URLs that mimic legitimate sites are a classic sign of phishing websites designed to steal your payment information. Always double-check the spelling of website URLs."
+            },
+            {
+                icon: "",
+                title: "Data Backup Strategy",
+                description: "Your computer crashes and you lose important files. To prevent this in the future, what's the best backup strategy?",
+                options: [
+                    "Save everything to one external hard drive",
+                    "Email important files to yourself",
+                    "Use the 3-2-1 rule: 3 copies, 2 different media types, 1 offsite",
+                    "Just rely on cloud storage"
+                ],
+                correct: 2,
+                explanation: "Excellent! The 3-2-1 backup rule is the gold standard: 3 total copies of important data, on 2 different types of media, with 1 copy stored offsite. This protects against multiple failure scenarios."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let gameCompleted = false;
+
+        function loadQuestion() {
+            if (currentQuestion >= scenarios.length) {
+                showFinalScore();
+                return;
+            }
+
+            const scenario = scenarios[currentQuestion];
+            
+            document.getElementById('scenario-title').textContent = scenario.title;
+            document.getElementById('scenario-description').textContent = scenario.description;
+            document.querySelector('.scenario-icon').textContent = scenario.icon;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            scenario.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index);
+                optionDiv.dataset.index = index;
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('feedback').style.display = 'none';
+            
+            updateProgress();
+            updateStats();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-index="${index}"]`).classList.add('selected');
+            selectedOption = index;
+            document.getElementById('submit-btn').disabled = false;
+        }
+
+        function submitAnswer() {
+            if (selectedOption === null) return;
+            
+            const scenario = scenarios[currentQuestion];
+            const feedback = document.getElementById('feedback');
+            const isCorrect = selectedOption === scenario.correct;
+            
+            document.querySelectorAll('.option').forEach((opt, index) => {
+                if (index === scenario.correct) {
+                    opt.classList.add('correct');
+                } else if (index === selectedOption && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+                opt.onclick = null; // Disable clicking
+            });
+            
+            if (isCorrect) {
+                score += 10 + (streak * 2); // Bonus points for streaks
+                streak++;
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `<strong>Correct!</strong><br>${scenario.explanation}`;
+            } else {
+                streak = 0;
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `<strong>Incorrect.</strong><br>${scenario.explanation}`;
+            }
+            
+            feedback.style.display = 'block';
+            document.getElementById('submit-btn').textContent = currentQuestion === scenarios.length - 1 ? 'View Results' : 'Next Question';
+            document.getElementById('submit-btn').onclick = nextQuestion;
+            document.getElementById('submit-btn').disabled = false;
+            
+            updateStats();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            selectedOption = null;
+            
+            if (currentQuestion >= scenarios.length) {
+                showFinalScore();
+            } else {
+                document.getElementById('submit-btn').textContent = 'Submit Answer';
+                document.getElementById('submit-btn').onclick = submitAnswer;
+                loadQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / scenarios.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function showFinalScore() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('final-score').style.display = 'block';
+            
+            let message = '';
+            const percentage = Math.round((score / (scenarios.length * 10)) * 100);
+            
+            if (percentage >= 90) {
+                message = `Cybersecurity Expert! You scored ${score} points (${percentage}%)`;
+            } else if (percentage >= 75) {
+                message = `Security Savvy! You scored ${score} points (${percentage}%)`;
+            } else if (percentage >= 60) {
+                message = `Good Security Awareness! You scored ${score} points (${percentage}%)`;
+            } else {
+                message = `Keep Learning! You scored ${score} points (${percentage}%)`;
+            }
+            
+            document.getElementById('final-score-text').innerHTML = `
+                <div style="font-size: 1.5rem; margin-bottom: 20px;">${message}</div>
+                <div style="font-size: 1.1rem; color: #b0b0b0;">
+                    You answered ${currentQuestion} questions and achieved a maximum streak of ${Math.max(...Array.from({length: currentQuestion}, (_, i) => streak))}.
+                    <br><br>
+                    Remember: Cybersecurity is an ongoing journey. Stay vigilant and keep learning!
+                </div>
+            `;
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            selectedOption = null;
+            
+            document.getElementById('question-container').style.display = 'block';
+            document.getElementById('final-score').style.display = 'none';
+            
+            loadQuestion();
+        }
+
+        // Initialize the game
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
